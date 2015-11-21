@@ -14,9 +14,9 @@ public class ListenMachine {
     enum STATUS {START, STOP};
     STATUS status = STATUS.STOP;
     SerialPort serialPort;
-    ReadThread.StreamListener listener;
+    ReadThread.RxtxListener listener;
     ReadThread thread;
-    ListenMachine(ReadThread.StreamListener listener){
+    ListenMachine(ReadThread.RxtxListener listener){
         this.listener = listener;
     }
 

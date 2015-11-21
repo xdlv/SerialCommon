@@ -8,9 +8,9 @@ import java.io.InputStream;
 public class ReadThread extends Thread {
     boolean close = false;
     InputStream inputStream = null;
-    StreamListener listener;
+    RxtxListener listener;
 
-    public ReadThread(InputStream inputStream, StreamListener listener) {
+    public ReadThread(InputStream inputStream, RxtxListener listener) {
         this.inputStream = inputStream;
         this.listener = listener;
     }
@@ -29,8 +29,14 @@ public class ReadThread extends Thread {
                         System.out.println("Thread exit for input stream exit");
                         return;
                     }
-                    if (listener != null) {
-                        listener.listen(new String(buffer, 0, count));
+                    if (listener == null){
+                        continue;
+                    }
+                    if (listener instanceof StreamListener){
+                        ((StreamListener)listener).listen(new String(buffer, 0, count));
+                    }
+                    if (listener instanceof ByteListener){
+                        ((ByteListener)listener).listen(buffer,count);
                     }
                 } else {
                     Thread.sleep(200);
@@ -46,7 +52,11 @@ public class ReadThread extends Thread {
         start();
         return this;
     }
-    interface StreamListener{
+    interface RxtxListener{}
+    interface StreamListener extends RxtxListener{
         void listen(String result);
+    }
+    interface ByteListener extends RxtxListener{
+        void listen(byte[] result, int count);
     }
 }
